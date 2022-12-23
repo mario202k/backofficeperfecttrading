@@ -1,9 +1,12 @@
+import 'package:backoffice/src/domain/data_fl_chart.dart';
+import 'package:backoffice/src/presentation/update_or_add_app_user/update_or_add_app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-
+import '../domain/app_user.dart';
 import '../domain/signal.dart';
+import '../presentation/edit_points/edit_points_screen.dart';
 import '../presentation/home/home_screen.dart';
 import '../presentation/login/login_screen.dart';
 import '../presentation/update_signal/update_signal_screen.dart';
@@ -13,7 +16,9 @@ import 'not_found_screen.dart';
 enum AppRoute {
   login,
   home,
-  updateSignal
+  updateSignal,
+  updateOrAddAppUser,
+  editPoints,
 }
 
 final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
@@ -25,11 +30,13 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
       final currentUser = FirebaseAuth.instance.currentUser;
 
       print("currentUser: $currentUser");
-      if (currentUser == null && state.location.contains("/${AppRoute.home.name}")) {
+      if (currentUser == null &&
+          state.location.contains("/${AppRoute.home.name}")) {
         return "/${AppRoute.login.name}";
       }
 
-      if (currentUser != null && state.location.contains("/${AppRoute.login.name}")) {
+      if (currentUser != null &&
+          state.location.contains("/${AppRoute.login.name}")) {
         return "/${AppRoute.home.name}";
       }
 
@@ -55,7 +62,35 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
             },
             builder: (context, state) {
               final signal = state.extra as Signal;
-              return UpdateSignalScreen(signal: signal,);
+              return UpdateSignalScreen(
+                signal: signal,
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoute.updateOrAddAppUser.name,
+            name: AppRoute.updateOrAddAppUser.name,
+            builder: (context, state) {
+              final appUser = state.extra as AppUser?;
+              return UpdateOrAddAppUserScreen(
+                appUser: appUser,
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoute.editPoints.name,
+            name: AppRoute.editPoints.name,
+            redirect: (_, state) {
+              final dataFlChart = state.extra as DataFlChart?;
+              if (dataFlChart == null) {
+                return "/${AppRoute.home.name}";
+              }
+              return null;
+            },
+            builder: (context, state) {
+              final dataFlChart = state.extra as DataFlChart;
+              return EditPointScreen(dataFlChart: dataFlChart,
+              );
             },
           ),
         ],
@@ -65,7 +100,6 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
         name: AppRoute.login.name,
         builder: (context, state) => const LoginScreen(),
       ),
-
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );

@@ -1,4 +1,3 @@
-
 import 'dart:html' as html;
 
 import 'package:backoffice/src/constants/app_sizes.dart';
@@ -8,38 +7,49 @@ import 'package:backoffice/src/presentation/common_widget/responsive_center.dart
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:web_date_picker/web_date_picker.dart';
 
 import '../../../data/app_user_repository.dart';
+import '../../../routing/app_router.dart';
 import 'my_dropdown_value.dart';
 
-
 final allAppUsersProvider =
-FutureProvider.autoDispose<List<AppUser>>((ref) async {
-  return ref.watch(appUserRepositoryProvider).getAppUsers(date: ref.watch(dateTimeProvider));
+    FutureProvider.autoDispose<List<AppUser>>((ref) async {
+  return ref
+      .watch(appUserRepositoryProvider)
+      .getAppUsers(date: ref.watch(dateTimeProvider));
 });
 
 final allPremiumAppUserProvider =
-FutureProvider.autoDispose<List<AppUser>>((ref) async {
-  return ref.watch(appUserRepositoryProvider).getPremiumAppUsers(date: ref.watch(dateTimeProvider));
+    FutureProvider.autoDispose<List<AppUser>>((ref) async {
+  return ref
+      .watch(appUserRepositoryProvider)
+      .getPremiumAppUsers(date: ref.watch(dateTimeProvider));
 });
 
 final allDeletedAppUserProvider =
-FutureProvider.autoDispose<List<AppUser>>((ref) async {
-  return ref.watch(appUserRepositoryProvider).getDeletedAppUsers(date: ref.watch(dateTimeProvider));
+    FutureProvider.autoDispose<List<AppUser>>((ref) async {
+  return ref
+      .watch(appUserRepositoryProvider)
+      .getDeletedAppUsers(date: ref.watch(dateTimeProvider));
 });
 
 final allOnlineAppUserProvider =
-FutureProvider.autoDispose<List<AppUser>>((ref) async {
-  return ref.watch(appUserRepositoryProvider).getOnlineAppUsers(date: ref.watch(dateTimeProvider));
+    FutureProvider.autoDispose<List<AppUser>>((ref) async {
+  return ref
+      .watch(appUserRepositoryProvider)
+      .getOnlineAppUsers(date: ref.watch(dateTimeProvider));
 });
 
 final allLoggedAppUserProvider =
-FutureProvider.autoDispose<List<AppUser>>((ref) async {
-  return ref.watch(appUserRepositoryProvider).getLoggedAppUsers(date: ref.watch(dateTimeProvider));
+    FutureProvider.autoDispose<List<AppUser>>((ref) async {
+  return ref
+      .watch(appUserRepositoryProvider)
+      .getLoggedAppUsers(date: ref.watch(dateTimeProvider));
 });
 
-final dateTimeProvider = StateProvider.autoDispose<DateTime?>((ref)  {
+final dateTimeProvider = StateProvider.autoDispose<DateTime?>((ref) {
   return null;
 });
 
@@ -58,39 +68,40 @@ class AppUserPage extends ConsumerWidget {
       MyDropdownValueEnum.logged: ref.watch(allLoggedAppUserProvider),
     };
     return ResponsivePaddingCenter(
-      child: Column(
-        children: [
-          gapH30,
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children:  [
-              const Text('Filter:'),
-              gapW12,
-              const MyDropdownValue(),
-              gapW48,
-              const Text('Actif since:'),
-              gapW12,
-              GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Center(
-                  child: WebDatePicker(
-                    onChange: (value) {
-                      ref.read(dateTimeProvider.notifier).state = value;
-                    },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            gapH30,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Filter:'),
+                gapW12,
+                const MyDropdownValue(),
+                gapW48,
+                const Text('Actif since:'),
+                gapW12,
+                GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  child: Center(
+                    child: WebDatePicker(
+                      onChange: (value) {
+                        ref.read(dateTimeProvider.notifier).state = value;
+                      },
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-          gapH30,
-          AsyncValueWidget<List<AppUser>>(
-              value: myValues[ref.watch(myValueProvider)]!,
-              data: (data) {
-                return SingleChildScrollView(
-                  child: Column(
+                )
+              ],
+            ),
+            gapH30,
+            AsyncValueWidget<List<AppUser>>(
+                value: myValues[ref.watch(myValueProvider)]!,
+                data: (data) {
+                  return Column(
                     children: [
+                      _myButtons(appUsers: data, context: context),
                       Table(
                         border: TableBorder.all(
                             width: 1, color: Colors.black.withOpacity(0.4)),
@@ -102,6 +113,7 @@ class AppUserPage extends ConsumerWidget {
                             Text("phone number"),
                             Text('isLogged'),
                             Text('isPremium'),
+                            Text('Update'),
                           ]),
                           ...data.map((appUser) => TableRow(
                                   children: [
@@ -112,53 +124,104 @@ class AppUserPage extends ConsumerWidget {
                                     appUser.phoneNumber),
                                 Text(appUser.isLogged.toString()),
                                 Text(appUser.isPremium.toString()),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      context.goNamed(
+                                          AppRoute.updateOrAddAppUser.name,
+                                          extra: appUser);
+                                    },
+                                    child: const Text('Update')),
                               ]
                                       .map((e) => FittedBox(
                                           fit: BoxFit.scaleDown, child: e))
                                       .toList()))
                         ],
                       ),
-                      gapH30,
-                      ElevatedButton(onPressed: () async {
-                        final excel = Excel.createExcel();
-                        final sheet = excel['Sheet1'];
-                        sheet.appendRow(['email', "first name", "last name", "phone number", 'isLogged', 'isPremium']);
-                        for (final appUser in data) {
-                          sheet.appendRow([
-                            appUser.email,
-                            appUser.firstName,
-                            appUser.lastName,
-                            appUser.countryCallingCode + appUser.phoneNumber,
-                            appUser.isLogged.toString(),
-                            appUser.isPremium.toString(),
-                          ]);
-                        }
-
-                        // Save the Changes in file
-                        final listBytes = excel.encode();
-                        final blob = html.Blob([listBytes], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                        final url = html.Url.createObjectUrlFromBlob(blob);
-                        final anchor = html.document.createElement('a') as html.AnchorElement
-                          ..href = url
-                          ..style.display = 'none'
-                          ..download = 'app_users.xlsx';
-                        html.document.body!.children.add(anchor);
-
-                        // download
-                        anchor.click();
-
-                        // cleanup
-                        html.document.body!.children.remove(anchor);
-                        html.Url.revokeObjectUrl(url);
-
-
-                      }, child: const Text('Export to CSV'))
+                      _myButtons(appUsers: data, context: context),
                     ],
-                  ),
-                );
-              }),
-        ],
+                  );
+                }),
+
+          ],
+        ),
       ),
     );
   }
+}
+
+Widget _myButtons ({required List<AppUser> appUsers, required BuildContext context}) {
+  return Column(
+    children: [
+      gapH30,
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+              onPressed: () async {
+                final excel = Excel.createExcel();
+                final sheet = excel['Sheet1'];
+                sheet.appendRow([
+                  'email',
+                  "first name",
+                  "last name",
+                  "phone number",
+                  'isLogged',
+                  'isPremium',
+                  'createdAt',
+                  'updatedAt',
+                  'hasDeletedAccount',
+                  'isOnline',
+                ]);
+                for (final appUser in appUsers) {
+                  sheet.appendRow([
+                    appUser.email,
+                    appUser.firstName,
+                    appUser.lastName,
+                    appUser.countryCallingCode +
+                        appUser.phoneNumber,
+                    appUser.isLogged.toString(),
+                    appUser.isPremium.toString(),
+                    appUser.createdAt.toString(),
+                    appUser.updatedAt.toString(),
+                    appUser.hasDeletedAccount.toString(),
+                    appUser.isOnline.toString(),
+                  ]);
+                }
+
+                // Save the Changes in file
+                final listBytes = excel.encode();
+                final blob = html.Blob([
+                  listBytes
+                ], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                final url =
+                html.Url.createObjectUrlFromBlob(blob);
+                final anchor = html.document.createElement('a')
+                as html.AnchorElement
+                  ..href = url
+                  ..style.display = 'none'
+                  ..download = 'app_users.xlsx';
+                html.document.body!.children.add(anchor);
+
+                // download
+                anchor.click();
+
+                // cleanup
+                html.document.body!.children.remove(anchor);
+                html.Url.revokeObjectUrl(url);
+              },
+              child: const Text('Export to CSV')),
+          gapW16,
+          ElevatedButton(
+              onPressed: () {
+                context.goNamed(
+                  AppRoute.updateOrAddAppUser.name,
+                );
+              },
+              child: const Text('Add Fake AppUser')),
+        ],
+      ),
+      gapH30,
+    ],
+  );
+
 }

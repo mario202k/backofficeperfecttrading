@@ -6,6 +6,7 @@ import 'text_form_field_widget.dart';
 class TextFieldAndTitle extends StatelessWidget {
   final String title;
   final String? hintText;
+  final bool? enabled;
   final TextEditingController? confirmationPassword;
   final TextEditingController textEditingController;
   final String? initialContent;
@@ -25,7 +26,7 @@ class TextFieldAndTitle extends StatelessWidget {
     required this.typeOfTextForm,
     this.onEditingComplete,
      this.textInputAction,
-    this.focusNode, this.initialContent, this.onChanged, this.textInputType,
+    this.focusNode, this.initialContent, this.onChanged, this.textInputType, this.enabled,
   }) : super(key: key);
 
   @override
@@ -44,6 +45,7 @@ class TextFieldAndTitle extends StatelessWidget {
           gapH4,
           TextFormFieldWidget(
             focusNode: focusNode,
+            enabled: enabled,
             textEditingController: textEditingController,
             confirmationPassword: confirmationPassword,
             initialContent: initialContent,

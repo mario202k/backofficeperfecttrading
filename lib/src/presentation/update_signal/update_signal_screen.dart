@@ -218,7 +218,7 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
                             isBuy: _isBuy,
                             isVip: _isVip,
                             createdAt: DateTime.now(),
-                            isClosed: false,
+                            isClosed: _isClosed,
                           ),
                         );
                         setState(() {

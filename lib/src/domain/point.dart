@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 @immutable
 class Point{
   final String id;
-  final MapEntry<num,String> x;
-  final MapEntry<num,String> y;
+  final MapEntry<String,num> x;
+  final MapEntry<String,num> y;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -45,8 +45,8 @@ class Point{
 
   Point copyWith({
     String? id,
-    MapEntry<num, String>? x,
-    MapEntry<num, String>? y,
+    MapEntry<String,num>? x,
+    MapEntry<String,num>? y,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -62,18 +62,20 @@ class Point{
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'x': x,
-      'y': y,
+      'x': {x.key:x.value},
+      'y': {y.key:y.value},
       'createdAt': createdAt == DateTime.now() ? FieldValue.serverTimestamp() : createdAt,
       'updatedAt': updatedAt == DateTime.now() ? FieldValue.serverTimestamp() : updatedAt,
     };
   }
 
   factory Point.fromMap(Map<String, dynamic> map) {
+    final entryX = (map['x'] as Map).entries.first;
+    final entryY = (map['y'] as Map).entries.first;
     return Point(
       id: map['id'] as String,
-      x: map['x'] as MapEntry<num, String>,
-      y: map['y'] as MapEntry<num, String>,
+      x: MapEntry<String,num>(entryX.key, entryX.value as num),
+      y: MapEntry<String,num>(entryY.key, entryY.value as num),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       updatedAt: (map['updatedAt'] as Timestamp).toDate(),
     );

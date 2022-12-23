@@ -197,7 +197,8 @@ class _State extends ConsumerState {
                         (error) => context.showSnackBar(error.details.message));
                   }
                 },
-                child: const Text("Add"))
+                child: const Text("Add")),
+          gapH64,
         ],
       ),
     );

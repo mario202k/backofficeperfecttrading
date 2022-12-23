@@ -10,11 +10,13 @@ enum TypeOfTextForm { password, name, email, any, number }
 
 class TextFormFieldWidget extends StatefulWidget {
   final TextEditingController textEditingController;
+  final bool? enabled;
   final String? initialContent;
   final String? hintText;
   final TextEditingController? confirmationPassword;
   final TypeOfTextForm typeOfTextForm;
   final TextInputAction? textInputAction;
+  final OutlineInputBorder? border;
   final TextInputType? textInputType;
   final VoidCallback? onEditingComplete;
   final Function(String val)? onChanged;
@@ -31,7 +33,7 @@ class TextFormFieldWidget extends StatefulWidget {
       this.focusNode,
       this.initialContent,
       this.onChanged,
-      this.textInputType})
+      this.textInputType, this.enabled, this.border})
       : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
     return TextFormField(
       controller: widget.textEditingController,
       focusNode: widget.focusNode,
+      enabled: widget.enabled,
       keyboardType: widget.textInputType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       autofillHints: switchTypeOfTextForm(widget.typeOfTextForm),
@@ -73,7 +76,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         hintText: widget.typeOfTextForm == TypeOfTextForm.password
             ? " \u{2022}\u{2022}\u{2022}\u{2022}\u{2022}\u{2022}\u{2022}\u{2022}"
             : widget.hintText,
-        border: OutlineInputBorder(
+        border: widget.border ?? OutlineInputBorder(
           borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(
             color: context.theme.colorScheme.outline,

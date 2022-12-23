@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 import '../data/app_user_repository.dart';
 import '../domain/app_user.dart';
 import '../domain/purchase.dart';
+import '../exceptions/app_exception.dart';
 import 'auth_service.dart';
 
 final appUserServiceProvider = Provider.autoDispose<AppUserService>((ref) {
@@ -15,11 +17,14 @@ final appUserServiceProvider = Provider.autoDispose<AppUserService>((ref) {
 abstract class AppUserServiceInterface {
   Future<AppUser> getAppUser({required String userId});
 
-
   Stream<int> getNumberOfAppUsers();
+
   Stream<int> getNumberOfPremium();
+
   Stream<int> getNumberOfLogged();
+
   Stream<int> getNumberOfOnline();
+
   Stream<int> getNumberOfDeletedAccount();
 
   Future<void> updateAppUser(
@@ -27,7 +32,7 @@ abstract class AppUserServiceInterface {
 
   Stream<AppUser?> watchAppUser();
 
-  Future<void> setAppUser({required AppUser appUser});
+  Future<Result<void, AppException>> setAppUser({required AppUser appUser});
 
   Future<void> setPurchase(
       {required String userId, required Purchase purchase});
@@ -55,8 +60,14 @@ class AppUserService implements AppUserServiceInterface {
   }
 
   @override
-  Future<void> setAppUser({required AppUser appUser}) {
-    return appUserRepository.setAppUser(appUser: appUser);
+  Future<Result<void, AppException>> setAppUser(
+      {required AppUser appUser}) async {
+    try {
+      await appUserRepository.setAppUser(appUser: appUser);
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
   }
 
   @override

@@ -1,5 +1,8 @@
+import 'package:backoffice/src/domain/point.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import 'graph.dart';
 
 @immutable
 class DataFlChart {
@@ -10,10 +13,13 @@ class DataFlChart {
   final double? minY;
   final double? maxY;
   final List<FlSpot> spots;
+  final Graph graph;
+  final List<Point> points;
   final Widget Function(double value, TitleMeta meta) bottomTitleWidgets;
   final Widget Function(double value, TitleMeta meta) leftTitleWidgets;
 
   const DataFlChart({
+    required this.graph, required this.points,
     this.horizontalInterval,
     this.verticalInterval,
     this.minX,

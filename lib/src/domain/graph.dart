@@ -109,7 +109,7 @@ class Graph {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'type': type,
+      'type': type.name,
       'title': title,
       'description': description,
       'horizontalInterval': horizontalInterval,
@@ -118,23 +118,28 @@ class Graph {
       'xMax': xMax,
       'yMin': yMin,
       'yMax': yMax,
-      'createdAt': createdAt == DateTime.now() ? FieldValue.serverTimestamp() : createdAt,
-      'updatedAt': updatedAt == DateTime.now() ? FieldValue.serverTimestamp() : updatedAt,
+      'createdAt': createdAt == DateTime.now()
+          ? FieldValue.serverTimestamp()
+          : createdAt,
+      'updatedAt': updatedAt == DateTime.now()
+          ? FieldValue.serverTimestamp()
+          : updatedAt,
     };
   }
 
   factory Graph.fromMap(Map<String, dynamic> map) {
     return Graph(
       id: map['id'] as String,
-      type: map['type'] as GraphType,
-      title: map['title'] as String,
-      description: map['description'] as String,
+      type: GraphType.values
+          .firstWhere((val) => val.name == (map['type'] as String)),
+      title: map['title'] as String?,
+      description: map['description'] as String?,
       horizontalInterval: map['horizontalInterval'] as num,
       verticalInterval: map['verticalInterval'] as num,
-      xMin: map['xMin'] as num,
-      xMax: map['xMax'] as num,
-      yMin: map['yMin'] as num,
-      yMax: map['yMax'] as num,
+      xMin: map['xMin'] as num?,
+      xMax: map['xMax'] as num?,
+      yMin: map['yMin'] as num?,
+      yMax: map['yMax'] as num?,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       updatedAt: (map['updatedAt'] as Timestamp).toDate(),
     );

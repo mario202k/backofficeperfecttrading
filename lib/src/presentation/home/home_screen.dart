@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../generated/assets.dart';
 import '../common_widget/drawer/custom_drawer.dart';
 import 'app_user_page/app_user_page.dart';
+import 'graph_page/graph_page.dart';
 import 'signal_page/signal_page.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -37,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               DashboardPage(),
               AppUserPage(),
               SignalPage(),
-              DashboardPage(),
+              GraphPage(),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
