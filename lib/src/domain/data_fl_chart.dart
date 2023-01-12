@@ -12,20 +12,23 @@ class DataFlChart {
   final double? maxX;
   final double? minY;
   final double? maxY;
+  final int? totalPipsWon;
+  final int? totalTrades;
   final List<FlSpot> spots;
   final Graph graph;
   final List<Point> points;
   final Widget Function(double value, TitleMeta meta) bottomTitleWidgets;
   final Widget Function(double value, TitleMeta meta) leftTitleWidgets;
 
-  const DataFlChart({
-    required this.graph, required this.points,
+  const DataFlChart(  {
     this.horizontalInterval,
     this.verticalInterval,
     this.minX,
     this.maxX,
     this.minY,
     this.maxY,
+    this.totalPipsWon, this.totalTrades,
+    required this.graph, required this.points,
     required this.spots,
     required this.bottomTitleWidgets,
     required this.leftTitleWidgets,

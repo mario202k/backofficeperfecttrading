@@ -4,6 +4,7 @@ import 'package:backoffice/src/constants/app_sizes.dart';
 import 'package:backoffice/src/domain/app_user.dart';
 import 'package:backoffice/src/presentation/common_widget/async_value_widget.dart';
 import 'package:backoffice/src/presentation/common_widget/responsive_center.dart';
+import 'package:backoffice/src/utils/extension_date_string.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,6 +100,7 @@ class AppUserPage extends ConsumerWidget {
             AsyncValueWidget<List<AppUser>>(
                 value: myValues[ref.watch(myValueProvider)]!,
                 data: (data) {
+                  data.sort((a, b) => b.createdAt.compareTo(a.createdAt));
                   return Column(
                     children: [
                       _myButtons(appUsers: data, context: context),
@@ -141,7 +143,6 @@ class AppUserPage extends ConsumerWidget {
                     ],
                   );
                 }),
-
           ],
         ),
       ),
@@ -149,7 +150,8 @@ class AppUserPage extends ConsumerWidget {
   }
 }
 
-Widget _myButtons ({required List<AppUser> appUsers, required BuildContext context}) {
+Widget _myButtons(
+    {required List<AppUser> appUsers, required BuildContext context}) {
   return Column(
     children: [
       gapH30,
@@ -161,10 +163,12 @@ Widget _myButtons ({required List<AppUser> appUsers, required BuildContext conte
                 final excel = Excel.createExcel();
                 final sheet = excel['Sheet1'];
                 sheet.appendRow([
-                  'email',
-                  "first name",
                   "last name",
+                  "first name",
+                  "phone code",
                   "phone number",
+                  "language",
+                  'email',
                   'isLogged',
                   'isPremium',
                   'createdAt',
@@ -174,15 +178,16 @@ Widget _myButtons ({required List<AppUser> appUsers, required BuildContext conte
                 ]);
                 for (final appUser in appUsers) {
                   sheet.appendRow([
-                    appUser.email,
-                    appUser.firstName,
                     appUser.lastName,
-                    appUser.countryCallingCode +
-                        appUser.phoneNumber,
+                    appUser.firstName,
+                    appUser.countryCallingCode,
+                    appUser.phoneNumber,
+                    appUser.languageCode,
+                    appUser.email,
                     appUser.isLogged.toString(),
                     appUser.isPremium.toString(),
-                    appUser.createdAt.toString(),
-                    appUser.updatedAt.toString(),
+                    appUser.createdAt.format(),
+                    appUser.updatedAt.format(),
                     appUser.hasDeletedAccount.toString(),
                     appUser.isOnline.toString(),
                   ]);
@@ -193,13 +198,12 @@ Widget _myButtons ({required List<AppUser> appUsers, required BuildContext conte
                 final blob = html.Blob([
                   listBytes
                 ], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                final url =
-                html.Url.createObjectUrlFromBlob(blob);
-                final anchor = html.document.createElement('a')
-                as html.AnchorElement
-                  ..href = url
-                  ..style.display = 'none'
-                  ..download = 'app_users.xlsx';
+                final url = html.Url.createObjectUrlFromBlob(blob);
+                final anchor =
+                    html.document.createElement('a') as html.AnchorElement
+                      ..href = url
+                      ..style.display = 'none'
+                      ..download = 'app_users.xlsx';
                 html.document.body!.children.add(anchor);
 
                 // download
@@ -223,5 +227,4 @@ Widget _myButtons ({required List<AppUser> appUsers, required BuildContext conte
       gapH30,
     ],
   );
-
 }

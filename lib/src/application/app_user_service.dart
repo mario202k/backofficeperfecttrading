@@ -4,6 +4,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../data/app_user_repository.dart';
 import '../domain/app_user.dart';
+import '../domain/app_version.dart';
 import '../domain/purchase.dart';
 import '../exceptions/app_exception.dart';
 import 'auth_service.dart';
@@ -39,6 +40,10 @@ abstract class AppUserServiceInterface {
 
   Future<Purchase> getPurchase(
       {required String userId, required String purchaseId});
+
+  Future<void> setAppVersion({required AppVersion appVersion});
+
+  Future<AppVersion?> getLastAppVersion();
 }
 
 class AppUserService implements AppUserServiceInterface {
@@ -114,5 +119,15 @@ class AppUserService implements AppUserServiceInterface {
   @override
   Stream<int> getNumberOfPremium() {
     return appUserRepository.getNumberOfPremium();
+  }
+
+  @override
+  Future<void> setAppVersion({required AppVersion appVersion}) {
+    return appUserRepository.setAppVersion(appVersion: appVersion);
+  }
+
+  @override
+  Future<AppVersion?> getLastAppVersion() {
+    return appUserRepository.getLastAppVersion();
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 class Signal {
   final String id;
   final String name;
+  final int pips;
   final num entry;
   final num stopLoss;
   final num takeProfit;
@@ -19,6 +20,7 @@ class Signal {
   const Signal({
     required this.id,
     required this.name,
+    required this.pips,
     required this.entry,
     required this.stopLoss,
     required this.takeProfit,
@@ -32,23 +34,25 @@ class Signal {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Signal &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          entry == other.entry &&
-          stopLoss == other.stopLoss &&
-          takeProfit == other.takeProfit &&
-          isBuy == other.isBuy &&
-          isClosed == other.isClosed &&
-          isVip == other.isVip &&
-          createdAt == other.createdAt &&
-          updatedAt == other.updatedAt);
+          (other is Signal &&
+              runtimeType == other.runtimeType &&
+              id == other.id &&
+              name == other.name &&
+              pips == other.pips &&
+              entry == other.entry &&
+              stopLoss == other.stopLoss &&
+              takeProfit == other.takeProfit &&
+              isBuy == other.isBuy &&
+              isClosed == other.isClosed &&
+              isVip == other.isVip &&
+              createdAt == other.createdAt &&
+              updatedAt == other.updatedAt);
 
   @override
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
+      pips.hashCode ^
       entry.hashCode ^
       stopLoss.hashCode ^
       takeProfit.hashCode ^
@@ -58,14 +62,16 @@ class Signal {
       createdAt.hashCode ^
       updatedAt.hashCode;
 
+
   @override
   String toString() {
-    return 'Signal{ id: $id, name: $name, entry: $entry, stopLoss: $stopLoss, takeProfit: $takeProfit, isBuy: $isBuy, isClosed: $isClosed,  isVip: $isVip, createdAt: $createdAt, updatedAt: $updatedAt, }';
+    return 'Signal{id: $id, name: $name, pips: $pips, entry: $entry, stopLoss: $stopLoss, takeProfit: $takeProfit, isBuy: $isBuy, isClosed: $isClosed, isVip: $isVip, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 
   Signal copyWith({
     String? id,
     String? name,
+    int? pips,
     num? entry,
     num? stopLoss,
     num? takeProfit,
@@ -78,6 +84,7 @@ class Signal {
     return Signal(
       id: id ?? this.id,
       name: name ?? this.name,
+      pips: pips ?? this.pips,
       entry: entry ?? this.entry,
       stopLoss: stopLoss ?? this.stopLoss,
       takeProfit: takeProfit ?? this.takeProfit,
@@ -93,6 +100,7 @@ class Signal {
     return {
       'id': id,
       'name': name,
+      'pips': pips,
       'entry': entry,
       'stopLoss': stopLoss,
       'takeProfit': takeProfit,
@@ -112,6 +120,7 @@ class Signal {
     return Signal(
       id: map['id'] as String,
       name: map['name'] as String,
+      pips: map['pips'] as int,
       entry: map['entry'] as num,
       stopLoss: map['stopLoss'] as num,
       takeProfit: map['takeProfit'] as num,

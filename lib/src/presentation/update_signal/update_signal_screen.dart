@@ -15,6 +15,7 @@ import '../common_widget/text_form_field_widget.dart';
 
 class UpdateSignalScreen extends ConsumerStatefulWidget {
   final Signal signal;
+
   const UpdateSignalScreen({Key? key, required this.signal}) : super(key: key);
 
   @override
@@ -26,6 +27,7 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
   late TextEditingController _entryController;
   late TextEditingController _stopLossController;
   late TextEditingController _takeProfitController;
+  late TextEditingController _pipsController;
   late GlobalKey<FormState> _fKey;
   late FocusScopeNode _node;
   late bool _isLoading;
@@ -38,7 +40,7 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
     super.initState();
 
     _nameController = TextEditingController();
-
+    _pipsController = TextEditingController();
     _entryController = TextEditingController();
     _stopLossController = TextEditingController();
     _takeProfitController = TextEditingController();
@@ -52,11 +54,10 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
     _entryController.text = widget.signal.entry.toString();
     _stopLossController.text = widget.signal.stopLoss.toString();
     _takeProfitController.text = widget.signal.takeProfit.toString();
+    _pipsController.text = widget.signal.pips.toString();
     _isBuy = widget.signal.isBuy;
     _isVip = widget.signal.isVip;
     _isClosed = widget.signal.isClosed;
-
-
   }
 
   @override
@@ -142,11 +143,20 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
                         },
                       ),
                       gapH16,
+                      TextFieldAndTitle(
+                        title: "Pips",
+                        textEditingController: _pipsController,
+                        typeOfTextForm: TypeOfTextForm.any,
+                        onEditingComplete: () {
+                          _node.nextFocus();
+                        },
+                      ),
+                      gapH16,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Send to :",
+                            "Signal for:",
                             style: context.theme.textTheme.caption!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 2.4,
@@ -205,33 +215,38 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateSignalScreen> {
                           _isLoading = true;
                         });
 
-                        final result =
-                        await ref.read(signalServiceProvider).setSignal(
-                          signal: Signal(
-                            id: widget.signal.id,
-                            name: _nameController.text,
-                            entry: num.parse(_entryController.text.trim()),
-                            stopLoss: num.parse(_entryController.text.trim()),
-                            updatedAt: DateTime.now(),
-                            takeProfit:
-                            num.parse(_takeProfitController.text.trim()),
-                            isBuy: _isBuy,
-                            isVip: _isVip,
-                            createdAt: DateTime.now(),
-                            isClosed: _isClosed,
-                          ),
-                        );
+                        final result = await ref
+                            .read(signalServiceProvider)
+                            .setSignal(
+                              signal: Signal(
+                                id: widget.signal.id,
+                                name: _nameController.text,
+                                entry: num.parse(_entryController.text.trim()),
+                                stopLoss:
+                                    num.parse(_stopLossController.text.trim()),
+                                updatedAt: DateTime.now(),
+                                pips: num.tryParse(_pipsController.text.trim())
+                                    ?.toInt() ?? 0,
+                                takeProfit: num.parse(
+                                    _takeProfitController.text.trim()),
+                                isBuy: _isBuy,
+                                isVip: _isVip,
+                                createdAt: DateTime.now(),
+                                isClosed: _isClosed,
+                              ),
+                            );
                         setState(() {
                           _isLoading = false;
                         });
                         result.when((success) {
                           context.showSnackBar("Signal Updated");
-
                         },
-                                (error) => context.showSnackBar(error.details.message));
+                            (error) =>
+                                context.showSnackBar(error.details.message));
                       }
                     },
-                    child: const Text("Update"))
+                    child: const Text("Update")),
+              gapH144,
             ],
           ),
         ),

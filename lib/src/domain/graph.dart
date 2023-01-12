@@ -12,6 +12,8 @@ class Graph {
   final GraphType type;
   final String? title;
   final String? description;
+  final int? totalPipsWon;
+  final int? totalTrades;
   final num horizontalInterval;
   final num verticalInterval;
   final num? xMin;
@@ -28,6 +30,8 @@ class Graph {
     required this.type,
     this.title,
     this.description,
+    this.totalPipsWon,
+    this.totalTrades,
     required this.horizontalInterval,
     required this.verticalInterval,
     this.xMin,
@@ -47,6 +51,8 @@ class Graph {
           type == other.type &&
           title == other.title &&
           description == other.description &&
+          totalPipsWon == other.totalPipsWon &&
+          totalTrades == other.totalTrades &&
           horizontalInterval == other.horizontalInterval &&
           verticalInterval == other.verticalInterval &&
           xMin == other.xMin &&
@@ -62,6 +68,8 @@ class Graph {
       type.hashCode ^
       title.hashCode ^
       description.hashCode ^
+      totalPipsWon.hashCode ^
+      totalTrades.hashCode ^
       horizontalInterval.hashCode ^
       verticalInterval.hashCode ^
       xMin.hashCode ^
@@ -81,6 +89,8 @@ class Graph {
     GraphType? type,
     String? title,
     String? description,
+    int? totalPipsWon,
+    int? totalTrades,
     num? horizontalInterval,
     num? verticalInterval,
     num? xMin,
@@ -95,6 +105,8 @@ class Graph {
       type: type ?? this.type,
       title: title ?? this.title,
       description: description ?? this.description,
+      totalPipsWon: totalPipsWon ?? this.totalPipsWon,
+      totalTrades: totalTrades ?? this.totalTrades,
       horizontalInterval: horizontalInterval ?? this.horizontalInterval,
       verticalInterval: verticalInterval ?? this.verticalInterval,
       xMin: xMin ?? this.xMin,
@@ -112,6 +124,8 @@ class Graph {
       'type': type.name,
       'title': title,
       'description': description,
+      'totalPipsWon': totalPipsWon,
+      'totalTrades': totalTrades,
       'horizontalInterval': horizontalInterval,
       'verticalInterval': verticalInterval,
       'xMin': xMin,
@@ -128,12 +142,15 @@ class Graph {
   }
 
   factory Graph.fromMap(Map<String, dynamic> map) {
+    print(map['type']);
     return Graph(
       id: map['id'] as String,
       type: GraphType.values
           .firstWhere((val) => val.name == (map['type'] as String)),
       title: map['title'] as String?,
       description: map['description'] as String?,
+      totalPipsWon: map['totalPipsWon'] as int?,
+      totalTrades: map['totalTrades'] as int?,
       horizontalInterval: map['horizontalInterval'] as num,
       verticalInterval: map['verticalInterval'] as num,
       xMin: map['xMin'] as num?,

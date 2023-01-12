@@ -1,9 +1,12 @@
 import 'package:backoffice/src/application/graph_service.dart';
 import 'package:backoffice/src/constants/app_sizes.dart';
+import 'package:backoffice/src/domain/testimony.dart';
+import 'package:backoffice/src/localization/localized_build_context.dart';
 import 'package:backoffice/src/presentation/common_widget/async_value_widget.dart';
 import 'package:backoffice/src/presentation/common_widget/responsive_center.dart';
 import 'package:backoffice/src/routing/app_router.dart';
 import 'package:backoffice/src/themes/theme_data_build_context.dart';
+import 'package:backoffice/src/utils/extension_date_string.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +17,11 @@ import '../../../domain/data_fl_chart.dart';
 final getGraphsProvider =
     FutureProvider.autoDispose<List<DataFlChart>>((ref) async {
   return ref.watch(graphServiceProvider).getGraphs();
+});
+
+final getTestimoniesProvider =
+    FutureProvider.autoDispose<List<Testimony>>((ref) async {
+  return ref.watch(graphServiceProvider).getTestimony();
 });
 
 class GraphPage extends ConsumerWidget {
@@ -250,11 +258,55 @@ class GraphPage extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                            gapH20,
+                            Text("Total pips gagnés: ${graph.totalPipsWon}"),
+                            gapH20,
+                            Text("Total trades: ${graph.totalTrades}"),
                           ],
                         )
                     ],
                   );
                 }),
+            gapH20,
+            Text("Testimony", style: Theme.of(context).textTheme.headline4),
+            AsyncValueWidget(
+                value: ref.watch(getTestimoniesProvider),
+                data: (data) {
+                  if (data.isEmpty) {
+                    return const Text("No Testimonies");
+                  }
+                  return Column(
+                    children: [
+                      for (final testimony in data)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            gapH16,
+                            Text(testimony.name),
+                            gapH16,
+                            Text(testimony.date.formatYMD()),
+                            gapH16,
+                            Text(testimony.content.toString()),
+                            TextButton(
+                                onPressed: () {
+                                  context.goNamed(
+                                      AppRoute.updateOrAddTestimony.name,
+                                      extra: testimony);
+                                },
+                                child: const Text("Edit Testimony")),
+                            const Divider(),
+                          ],
+                        )
+                    ],
+                  );
+                }),
+            gapH20,
+            TextButton(
+                onPressed: () {
+                  context.goNamed(AppRoute.updateOrAddTestimony.name);
+                },
+                child: const Text("Add Testimony")),
+            gapH20,
           ],
         ),
       ),

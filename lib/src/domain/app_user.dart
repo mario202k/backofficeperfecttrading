@@ -8,6 +8,7 @@ class AppUser{
   final String platform;
   final String countryCallingCode;
   final String phoneNumber;
+  final String languageCode;
   final bool isPremium;
   final bool isLogged;
   final bool hasDeletedAccount;
@@ -27,6 +28,7 @@ class AppUser{
     required this.platform,
     required this.countryCallingCode,
     required this.phoneNumber,
+    required this.languageCode,
     required this.isPremium,
     required this.isLogged,
     required this.hasDeletedAccount,
@@ -42,23 +44,24 @@ class AppUser{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is AppUser &&
-              runtimeType == other.runtimeType &&
-              id == other.id &&
-              fcmToken == other.fcmToken &&
-              platform == other.platform &&
-              countryCallingCode == other.countryCallingCode &&
-              phoneNumber == other.phoneNumber &&
-              isPremium == other.isPremium &&
-              isLogged == other.isLogged &&
-              hasDeletedAccount == other.hasDeletedAccount &&
-              isOnline == other.isOnline &&
-              email == other.email &&
-              password == other.password &&
-              firstName == other.firstName &&
-              lastName == other.lastName &&
-              createdAt == other.createdAt &&
-              updatedAt == other.updatedAt);
+      (other is AppUser &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          fcmToken == other.fcmToken &&
+          platform == other.platform &&
+          countryCallingCode == other.countryCallingCode &&
+          phoneNumber == other.phoneNumber &&
+          languageCode == other.languageCode &&
+          isPremium == other.isPremium &&
+          isLogged == other.isLogged &&
+          hasDeletedAccount == other.hasDeletedAccount &&
+          isOnline == other.isOnline &&
+          email == other.email &&
+          password == other.password &&
+          firstName == other.firstName &&
+          lastName == other.lastName &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt);
 
   @override
   int get hashCode =>
@@ -67,6 +70,7 @@ class AppUser{
       platform.hashCode ^
       countryCallingCode.hashCode ^
       phoneNumber.hashCode ^
+      languageCode.hashCode ^
       isPremium.hashCode ^
       isLogged.hashCode ^
       hasDeletedAccount.hashCode ^
@@ -78,9 +82,10 @@ class AppUser{
       createdAt.hashCode ^
       updatedAt.hashCode;
 
+
   @override
   String toString() {
-    return 'AppUser{ id: $id, fcmToken: $fcmToken, platform: $platform, phoneNumber: $phoneNumber, isPremium: $isPremium, email: $email, password: $password, firstName: $firstName, lastName: $lastName, createdAt: $createdAt, updatedAt: $updatedAt,}';
+    return 'AppUser{id: $id, fcmToken: $fcmToken, platform: $platform, countryCallingCode: $countryCallingCode, phoneNumber: $phoneNumber, languageCode: $languageCode, isPremium: $isPremium, isLogged: $isLogged, hasDeletedAccount: $hasDeletedAccount, isOnline: $isOnline, email: $email, password: $password, firstName: $firstName, lastName: $lastName, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 
   AppUser copyWith({
@@ -89,6 +94,7 @@ class AppUser{
     String? platform,
     String? countryCallingCode,
     String? phoneNumber,
+    String? languageCode,
     bool? isPremium,
     bool? isLogged,
     bool? hasDeletedAccount,
@@ -106,6 +112,7 @@ class AppUser{
       platform: platform ?? this.platform,
       countryCallingCode: countryCallingCode ?? this.countryCallingCode,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      languageCode: languageCode ?? this.languageCode,
       isPremium: isPremium ?? this.isPremium,
       isLogged: isLogged ?? this.isLogged,
       hasDeletedAccount: hasDeletedAccount ?? this.hasDeletedAccount,
@@ -126,6 +133,7 @@ class AppUser{
       'platform': platform,
       'countryCallingCode': countryCallingCode,
       'phoneNumber': phoneNumber,
+      'languageCode': languageCode,
       'isPremium': isPremium,
       'isLogged': isLogged,
       'hasDeletedAccount': hasDeletedAccount,
@@ -146,6 +154,7 @@ class AppUser{
       platform: map['platform'] as String,
       countryCallingCode: map['countryCallingCode'] as String,
       phoneNumber: map['phoneNumber'] as String,
+      languageCode: map['languageCode'] as String,
       isPremium: map['isPremium'] as bool,
       isLogged: map['isLogged'] as bool,
       hasDeletedAccount: map['hasDeletedAccount'] as bool,
@@ -155,7 +164,7 @@ class AppUser{
       firstName: map['firstName'] as String,
       lastName: map['lastName'] as String,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
-      updatedAt: (map['updatedAt'] as Timestamp).toDate(),
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 

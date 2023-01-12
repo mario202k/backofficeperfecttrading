@@ -13,6 +13,7 @@ class TextFormFieldWidget extends StatefulWidget {
   final bool? enabled;
   final String? initialContent;
   final String? hintText;
+  final int? maxLines;
   final TextEditingController? confirmationPassword;
   final TypeOfTextForm typeOfTextForm;
   final TextInputAction? textInputAction;
@@ -28,6 +29,7 @@ class TextFormFieldWidget extends StatefulWidget {
       required this.typeOfTextForm,
       this.onEditingComplete,
       this.confirmationPassword,
+      this.maxLines,
       this.hintText,
       this.textInputAction,
       this.focusNode,
@@ -62,6 +64,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       controller: widget.textEditingController,
       focusNode: widget.focusNode,
       enabled: widget.enabled,
+      maxLines: widget.maxLines ?? 1,
       keyboardType: widget.textInputType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       autofillHints: switchTypeOfTextForm(widget.typeOfTextForm),

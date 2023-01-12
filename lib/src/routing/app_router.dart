@@ -1,5 +1,7 @@
 import 'package:backoffice/src/domain/data_fl_chart.dart';
+import 'package:backoffice/src/domain/testimony.dart';
 import 'package:backoffice/src/presentation/update_or_add_app_user/update_or_add_app_user.dart';
+import 'package:backoffice/src/presentation/update_or_add_testimony/update_or_add_testimony_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +20,7 @@ enum AppRoute {
   home,
   updateSignal,
   updateOrAddAppUser,
+  updateOrAddTestimony,
   editPoints,
 }
 
@@ -78,6 +81,16 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
             },
           ),
           GoRoute(
+            path: AppRoute.updateOrAddTestimony.name,
+            name: AppRoute.updateOrAddTestimony.name,
+            builder: (context, state) {
+              final testimony = state.extra as Testimony?;
+              return UpdateOrAddTestimonyScreen(
+                testimony: testimony,
+              );
+            },
+          ),
+          GoRoute(
             path: AppRoute.editPoints.name,
             name: AppRoute.editPoints.name,
             redirect: (_, state) {
@@ -89,7 +102,8 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
             },
             builder: (context, state) {
               final dataFlChart = state.extra as DataFlChart;
-              return EditPointScreen(dataFlChart: dataFlChart,
+              return EditPointScreen(
+                dataFlChart: dataFlChart,
               );
             },
           ),

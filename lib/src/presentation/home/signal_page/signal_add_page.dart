@@ -68,7 +68,7 @@ class _State extends ConsumerState {
                   gapH16,
                   TextFieldAndTitle(
                     title: "Name",
-                    hintText: "EUR/USD",
+                    hintText: "EURUSD",
                     textEditingController: _nameController,
                     typeOfTextForm: TypeOfTextForm.any,
                     onEditingComplete: () {
@@ -166,35 +166,39 @@ class _State extends ConsumerState {
                       _isLoading = true;
                     });
 
-                    final result =
-                        await ref.read(signalServiceProvider).setSignal(
-                              signal: Signal(
-                                id: FirestoreService.instance
-                                    .getDocId(path: Paths.signals()),
-                                name: _nameController.text,
-                                entry: num.parse(_entryController.text.trim()),
-                                stopLoss: num.parse(_entryController.text.trim()),
-                                updatedAt: DateTime.now(),
-                                takeProfit:
-                                    num.parse(_takeProfitController.text.trim()),
-                                isBuy: _isBuy,
-                                isVip: _isVip,
-                                createdAt: DateTime.now(),
-                                isClosed: false,
-                              ),
-                            );
+                    final result = await ref
+                        .read(signalServiceProvider)
+                        .setSignal(
+                          signal: Signal(
+                            id: FirestoreService.instance
+                                .getDocId(path: Paths.signals()),
+                            name: _nameController.text,
+                            entry: num.parse(_entryController.text.trim()),
+                            stopLoss:
+                                num.parse(_stopLossController.text.trim()),
+                            updatedAt: DateTime.now(),
+                            takeProfit:
+                                num.parse(_takeProfitController.text.trim()),
+                            isBuy: _isBuy,
+                            isVip: _isVip,
+                            createdAt: DateTime.now(),
+                            isClosed: false,
+                            pips: 0,
+                          ),
+                        );
                     setState(() {
                       _isLoading = false;
                     });
                     result.when((success) {
-                      context.showSnackBar("Signal Added");
+                      context.showAlertDialog(
+                        title: "Signal Added",
+                        content: "Signal added successfully",
+                      );
                       _nameController.clear();
                       _entryController.clear();
                       _stopLossController.clear();
                       _takeProfitController.clear();
-
-                    },
-                        (error) => context.showSnackBar(error.details.message));
+                    }, (error) => context.showSnackBar(error.details.message));
                   }
                 },
                 child: const Text("Add")),

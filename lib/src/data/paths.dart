@@ -42,4 +42,17 @@ class Paths {
   static adminUsers() => 'adminUser';
 
   static adminUser({required String userId}) => 'adminUser/$userId';
+
+//---------------- AdminUser ----------------
+//---------------- Testimony ----------------
+  static testimony({required String testimonyId}) => 'testimony/$testimonyId';
+
+  static testimonies() => 'testimony';
+//---------------- Testimony ----------------
+// ----------------AppVersion ----------------
+  static appVersions() => 'appVersion';
+
+  static appVersion({required String version}) => 'appVersion/$version';
+
+// ----------------AppVersion ----------------
 }

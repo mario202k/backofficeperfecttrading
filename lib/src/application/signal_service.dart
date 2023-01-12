@@ -18,7 +18,7 @@ abstract class SignalServiceInterface {
 
   Future<List<Signal>> getSignals();
 
-  Future<void> deleteSignal({required String signalId});
+  Future<Result<void, AppException>> deleteSignal({required String signalId});
 
   Future<void> updateSignal(
       {required MapEntry<String, dynamic> entry, required String signalId});
@@ -32,8 +32,15 @@ class SignalService implements SignalServiceInterface {
   SignalService({required this.signalRepository});
 
   @override
-  Future<void> deleteSignal({required String signalId}) {
-    return signalRepository.deleteSignal(signalId: signalId);
+  Future<Result<void, AppException>> deleteSignal(
+      {required String signalId}) async {
+    try {
+      await signalRepository.deleteSignal(signalId: signalId);
+
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
   }
 
   @override
@@ -48,7 +55,7 @@ class SignalService implements SignalServiceInterface {
 
   @override
   Future<Result<void, AppException>> setSignal({required Signal signal}) async {
-    try{
+    try {
       await signalRepository.setSignal(signal: signal);
       return const Success(null);
     } on AppException catch (e) {

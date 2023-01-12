@@ -10,6 +10,7 @@ class TextFieldAndTitle extends StatelessWidget {
   final TextEditingController? confirmationPassword;
   final TextEditingController textEditingController;
   final String? initialContent;
+  final int? maxLines;
   final TextInputAction? textInputAction;
   final TypeOfTextForm typeOfTextForm;
   final TextInputType? textInputType;
@@ -26,7 +27,7 @@ class TextFieldAndTitle extends StatelessWidget {
     required this.typeOfTextForm,
     this.onEditingComplete,
      this.textInputAction,
-    this.focusNode, this.initialContent, this.onChanged, this.textInputType, this.enabled,
+    this.focusNode, this.initialContent, this.onChanged, this.textInputType, this.enabled, this.maxLines,
   }) : super(key: key);
 
   @override
@@ -49,6 +50,7 @@ class TextFieldAndTitle extends StatelessWidget {
             textEditingController: textEditingController,
             confirmationPassword: confirmationPassword,
             initialContent: initialContent,
+            maxLines: maxLines,
             hintText: hintText,
             typeOfTextForm: typeOfTextForm,
             onEditingComplete: () => onEditingComplete?.call(),

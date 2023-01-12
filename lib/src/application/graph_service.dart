@@ -8,6 +8,7 @@ import '../data/graph_repository.dart';
 import '../domain/data_fl_chart.dart';
 import '../domain/graph.dart';
 import '../domain/point.dart';
+import '../domain/testimony.dart';
 
 final graphServiceProvider = Provider.autoDispose<GraphService>((ref) {
   return GraphService(graphRepository: ref.watch(graphRepositoryProvider));
@@ -22,7 +23,19 @@ abstract class GraphServiceInterface {
 
   Future<void> setPoint({required String graphId, required Point point});
 
+  Stream<List<Point?>> watchPoints({required String graphId}) ;
+
+  Future<Result<void, AppException>> deletePoint(
+      {required String graphId, required String pointId});
+
   Future<List<Point>> getPoints({required String graphId});
+
+  Future<void> setTestimony({required Testimony testimony});
+
+  Future<List<Testimony>> getTestimony();
+
+  Future<void> updateGraph(
+      {required MapEntry<String, dynamic> entry, required String graphId});
 }
 
 class GraphService implements GraphServiceInterface {
@@ -49,6 +62,8 @@ class GraphService implements GraphServiceInterface {
         minX: graph.xMin?.toDouble(),
         maxY: graph.yMax?.toDouble(),
         minY: graph.yMin?.toDouble(),
+        totalPipsWon: graph.totalPipsWon,
+        totalTrades: graph.totalTrades,
         bottomTitleWidgets: (value, meta) {
           String text = '';
           for (final element in points) {
@@ -112,4 +127,51 @@ class GraphService implements GraphServiceInterface {
       return Result.error(e);
     }
   }
+
+  @override
+  Future<Result<void, AppException>> setTestimony(
+      {required Testimony testimony}) async {
+    try {
+      await graphRepository.setTestimony(testimony: testimony);
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<List<Testimony>> getTestimony() {
+    return graphRepository.getTestimony();
+  }
+
+  @override
+  Future<Result<void, AppException>> updateGraph(
+      {required MapEntry<String, dynamic> entry,
+      required String graphId}) async {
+    try {
+      await graphRepository.updateGraph(entry: entry, graphId: graphId);
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<void, AppException>> deletePoint(
+      {required String graphId, required String pointId}) async{
+    try {
+      await graphRepository.deletePoint(graphId: graphId, pointId: pointId);
+
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Stream<List<Point?>> watchPoints({required String graphId}) {
+    return graphRepository.watchPoints(graphId: graphId);
+  }
+
+
 }

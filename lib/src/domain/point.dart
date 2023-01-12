@@ -76,8 +76,8 @@ class Point{
       id: map['id'] as String,
       x: MapEntry<String,num>(entryX.key, entryX.value as num),
       y: MapEntry<String,num>(entryY.key, entryY.value as num),
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      updatedAt: (map['updatedAt'] as Timestamp).toDate(),
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/firestore_service.dart';
 import '../domain/app_user.dart';
+import '../domain/app_version.dart';
 import '../domain/notification.dart';
 import '../domain/purchase.dart';
 import 'paths.dart';
@@ -35,6 +36,8 @@ abstract class AppUserRepositoryInterface {
 
   Future<List<AppUser>> getAppUsers();
 
+  Stream<List<AppUser?>> getStreamAppUsers();
+
   Future<void> setAppUser({required AppUser appUser});
 
   Future<void> setAdminUser({required AdminUser adminUser});
@@ -59,6 +62,10 @@ abstract class AppUserRepositoryInterface {
       {required String userId, required Notification notification});
 
   Future<List<Notification>> getNotifications({required String userId});
+
+  Future<void> setAppVersion({required AppVersion appVersion});
+
+  Future<AppVersion?> getLastAppVersion();
 }
 
 class AppUserRepository implements AppUserRepositoryInterface {
@@ -235,5 +242,29 @@ class AppUserRepository implements AppUserRepositoryInterface {
             .where("updatedAt", isGreaterThan: date)
             .orderBy("updatedAt", descending: true),
         builder: (data) => AppUser.fromMap(data));
+  }
+
+  @override
+  Stream<List<AppUser?>> getStreamAppUsers() {
+    return _service.collectionStream(
+        path: Paths.appUsers(),
+        builder: (data) => data != null ? AppUser.fromMap(data) : null);
+  }
+
+
+  @override
+  Future<AppVersion?> getLastAppVersion() async {
+    final rep = await _service.collectionFuture(
+        path: Paths.appVersions(),
+        queryBuilder: (query) => query.orderBy('createdAt', descending: true),
+        builder: (data) => AppVersion.fromMap(data));
+    return rep.isNotEmpty ? rep.first : null;
+  }
+
+  @override
+  Future<void> setAppVersion({required AppVersion appVersion}) {
+    return _service.setDataWithAwait(
+        path: Paths.appVersion(version: appVersion.version),
+        data: appVersion.toMap());
   }
 }

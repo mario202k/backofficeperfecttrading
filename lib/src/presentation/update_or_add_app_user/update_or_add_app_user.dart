@@ -289,6 +289,7 @@ class _UpdateSignalScreenState extends ConsumerState<UpdateOrAddAppUserScreen> {
                                   id: widget.appUser?.id ??
                                       FirestoreService.instance
                                           .getDocId(path: Paths.appUsers()),
+                                  languageCode: "fr",
                                   fcmToken: _fcmTokenController.text.trim(),
                                   platform: _platformController.text.trim(),
                                   countryCallingCode:
