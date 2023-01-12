@@ -41,7 +41,8 @@ abstract class AppUserServiceInterface {
   Future<Purchase> getPurchase(
       {required String userId, required String purchaseId});
 
-  Future<void> setAppVersion({required AppVersion appVersion});
+  Future<Result<void, AppException>> setAppVersion(
+      {required AppVersion appVersion});
 
   Future<AppVersion?> getLastAppVersion();
 }
@@ -122,8 +123,14 @@ class AppUserService implements AppUserServiceInterface {
   }
 
   @override
-  Future<void> setAppVersion({required AppVersion appVersion}) {
-    return appUserRepository.setAppVersion(appVersion: appVersion);
+  Future<Result<void, AppException>> setAppVersion(
+      {required AppVersion appVersion}) async {
+    try {
+      await appUserRepository.setAppVersion(appVersion: appVersion);
+      return const Success(null);
+    } on AppException catch (e) {
+      return Result.error(e);
+    }
   }
 
   @override

@@ -2,11 +2,13 @@ import 'package:backoffice/src/domain/data_fl_chart.dart';
 import 'package:backoffice/src/domain/testimony.dart';
 import 'package:backoffice/src/presentation/update_or_add_app_user/update_or_add_app_user.dart';
 import 'package:backoffice/src/presentation/update_or_add_testimony/update_or_add_testimony_screen.dart';
+import 'package:backoffice/src/presentation/update_version/update_version.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/app_user.dart';
+import '../domain/app_version.dart';
 import '../domain/signal.dart';
 import '../presentation/edit_points/edit_points_screen.dart';
 import '../presentation/home/home_screen.dart';
@@ -22,6 +24,7 @@ enum AppRoute {
   updateOrAddAppUser,
   updateOrAddTestimony,
   editPoints,
+  updateVersion
 }
 
 final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
@@ -104,6 +107,16 @@ final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
               final dataFlChart = state.extra as DataFlChart;
               return EditPointScreen(
                 dataFlChart: dataFlChart,
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoute.updateVersion.name,
+            name: AppRoute.updateVersion.name,
+            builder: (context, state) {
+              final appVersion = state.extra as AppVersion?;
+              return UpdateVersion(
+                appVersion: appVersion,
               );
             },
           ),
